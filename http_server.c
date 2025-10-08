@@ -100,7 +100,6 @@ int main(void)
             }
 
             fseek(html_file, 0, SEEK_END);
-            long file_size = ftell(html_file);
             fseek(html_file, 0, SEEK_SET);
 
             // Defining a larger file buffer for the actual content of the file
