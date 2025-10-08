@@ -81,7 +81,7 @@ int main(void)
         int client_socket;
         socklen_t addr_size = sizeof(socket_address);
         client_socket = accept(socketdf, (struct sockaddr *)&socket_address, &addr_size);
-        if (client_socket < 1)
+        if (client_socket < 0)
         {
             printf("Error: Failed to accept connection\n");
             continue;
@@ -99,8 +99,6 @@ int main(void)
                 continue;
             }
 
-            fseek(html_file, 0, SEEK_END);
-            fseek(html_file, 0, SEEK_SET);
 
             // Defining a larger file buffer for the actual content of the file
             char file_content_buffer[8192];
