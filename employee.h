@@ -133,34 +133,23 @@ struct Employee createEmployee(char *first_name, char *middle_name, char *last_n
 {
     struct Employee new_employee;
 
-    new_employee.first_name = first_name;
-
-    new_employee.middle_name = middle_name;
-
-    new_employee.last_name = last_name;
-
-    new_employee.phone_number = phone_number;
-
-    new_employee.email = email;
-
-    new_employee.mailing_address = mailing_address;
+    new_employee.first_name = strdup(first_name);
+    new_employee.middle_name = strdup(middle_name);
+    new_employee.last_name = strdup(last_name);
+    new_employee.phone_number = strdup(phone_number);
+    new_employee.email = strdup(email);
+    new_employee.mailing_address = strdup(mailing_address);
 
     snprintf(new_employee.username, USERNAME_LENGTH, "%s", username);
-
     snprintf(new_employee.passcode, PASSWORD_LENGTH, "%s", passcode);
-
     snprintf(new_employee.birthday, BIRTHDAY_LENGTH, "%s", birthday);
 
-    new_employee.hire_date = hire_date;
-
-    new_employee.role = role;
-
-    new_employee.position = position;
+    new_employee.hire_date = strdup(hire_date);
+    new_employee.role = strdup(role);
+    new_employee.position = strdup(position);
 
     new_employee.bank_account_number = bank_account_number;
-
     new_employee.bank_routing_number = bank_routing_number;
-
     new_employee.hourly_pay_rate = hourly_pay_rate;
 
     snprintf(new_employee.ssn, SSN_LENGTH, "%s", ssn);
