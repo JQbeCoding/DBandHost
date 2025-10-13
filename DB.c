@@ -8,3 +8,43 @@
  * @author Ja'Quis Franklin, Developer at MayDayz Smokn BBQ
  * @date 10/07/2025
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "employee.h"
+
+#define MAX_EMPLOYEES 200
+
+int main(void)
+{
+
+    // Testing functions
+    struct Employee *employees = (struct Employee *)calloc(MAX_EMPLOYEES, sizeof(struct Employee));
+    if (employees == NULL)
+    {
+        perror("Failed to allocate memory for employees.\n");
+        return 1;
+    }
+    else
+    {
+        printf("Allocation succesful\n");
+    }
+
+    struct Employee employee1 = createEmployee("Ja'Quis", "Avshia", "Franklin", "704-967-5408", "jaquis.franklin@maydayz.com", "6500 Monteith Drive",
+                                               "M-3455663", "Avashia100604!!", "10/06/04", "06/01/24", "Admin", "CTO", 334844843, 01234567, 56.673445, "000-01-9989");
+    struct Employee employee2 = createEmployee("Lamar", "Jevon", "Henderson", "213-555-8192", "lamar.henderson@soxietytech.com", "8429 Sunset Blvd, Apt 12C", "HndrsonL001", "P@ssW0rd!93", "11/22/1993", "07/15/2022",
+                                               "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
+    struct Employee employee3 = createEmployee("Lamar", "Jacob", "Green", "213-555-8192", "lamar.henderson@soxietytech.com", "8429 Sunset Blvd, Apt 12C", "HndrsonL001", "P@ssW0rd!93", "11/22/1993", "07/15/2022",
+                                               "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
+
+    *employees = employee1;
+    *(employees + 1) = employee2;
+    *(employees + 2) = employee3;
+
+    // adding employee with same name
+
+    displayEmployees(employees, 10);
+    searchEmployeeByName(employees);
+
+    free(employees);
+}
