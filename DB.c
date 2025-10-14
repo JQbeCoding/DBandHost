@@ -14,6 +14,7 @@
 #include "employee.h"
 
 #define MAX_EMPLOYEES 200
+#define PASSWORD_BUFFER 150
 
 int main(void)
 {
@@ -41,11 +42,32 @@ int main(void)
     *(employees + 1) = employee2;
     *(employees + 2) = employee3;
 
+    size_t passcode_array_size = sizeof(employee1.passcode);
+
+    char *passwords = (char *)calloc(MAX_EMPLOYEES, PASSWORD_BUFFER);
+    if (passwords == NULL)
+    {
+        perror("Failed to allocate raw password buffer");
+        free(employees);
+        return 1;
+    }
+    for (int i = 0; i < 3; i++)
+    {
+        size_t raw_password_len = strlen(employees[i].passcode);
+        memcpy(passwords + i * passcode_array_size, employees[i].passcode, passcode_array_size);
+        *(passwords + i * passcode_array_size + raw_password_len) = '\0';
+    }
+
     // adding employee with same name
 
     displayEmployees(employees, 10);
     searchEmployeeByName(employees);
     searchEmployeeByUsername(employees);
+    char *current_raw_password = passwords + (0 * passcode_array_size);
+    int password_hash = hashPasscode(current_raw_password, employee1.passcode, 188);
+    displayEmployees(employees, 10);
+    printf("\n");
 
     free(employees);
+    free(passwords);
 }

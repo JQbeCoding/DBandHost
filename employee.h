@@ -1,14 +1,21 @@
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
-#define USERNAME_LENGTH 11
-#define PASSWORD_LENGTH 16
-#define BIRTHDAY_LENGTH 11
 #define SSN_LENGTH 12
 #define MAX_EMPLOYEES 200
+#define TIME_COST 3
+#define MEMORY_COST 65536
+#define PARALLELISM 1
+#define HASH_LENGTH 100
+#define SALT_LENGTH 16
+#define ENCODED_PASSCODE_BUFFER_SIZE 150
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+// Argon API used for password and SSN hashing
+#include "argon2.h"
+// For random bytes
+#include <sys/random.h>
 
 struct Employee
 {
@@ -18,10 +25,10 @@ struct Employee
     char *phone_number;
     char *email;
     char *mailing_address;
-    char username[USERNAME_LENGTH];
+    char *username;
     // Using a hashed passcode
-    char passcode[PASSWORD_LENGTH];
-    char birthday[BIRTHDAY_LENGTH];
+    char *passcode;
+    char *birthday;
     char *hire_date;
     char *role;
     char *position;
@@ -29,7 +36,7 @@ struct Employee
     int bank_routing_number;
     float hourly_pay_rate;
     // SSN will also be hashed
-    char ssn[SSN_LENGTH];
+    char *ssn;
 };
 
 /**
@@ -152,9 +159,9 @@ void searchEmployeeByUsername(struct Employee *employees)
  * @param ssn Array to store the hashed SSN.
  * @return A struct Employee with the entered details.
  */
-struct Employee createEmployee(char *first_name, char *middle_name, char *last_name, char *phone_number, char *email, char *mailing_address, char username[USERNAME_LENGTH],
-                               char passcode[PASSWORD_LENGTH], char birthday[BIRTHDAY_LENGTH], char *hire_date, char *role, char *position, int bank_account_number, int bank_routing_number, float hourly_pay_rate,
-                               char ssn[SSN_LENGTH])
+struct Employee createEmployee(char *first_name, char *middle_name, char *last_name, char *phone_number, char *email, char *mailing_address, char *username,
+                               char *passcode, char *birthday, char *hire_date, char *role, char *position, int bank_account_number, int bank_routing_number, float hourly_pay_rate,
+                               char *ssn)
 {
     struct Employee new_employee;
 
@@ -165,9 +172,9 @@ struct Employee createEmployee(char *first_name, char *middle_name, char *last_n
     new_employee.email = strdup(email);
     new_employee.mailing_address = strdup(mailing_address);
 
-    snprintf(new_employee.username, USERNAME_LENGTH, "%s", username);
-    snprintf(new_employee.passcode, PASSWORD_LENGTH, "%s", passcode);
-    snprintf(new_employee.birthday, BIRTHDAY_LENGTH, "%s", birthday);
+    new_employee.username = strdup(username);
+    new_employee.passcode = strdup(passcode);
+    new_employee.birthday = strdup(birthday);
 
     new_employee.hire_date = strdup(hire_date);
     new_employee.role = strdup(role);
@@ -177,9 +184,31 @@ struct Employee createEmployee(char *first_name, char *middle_name, char *last_n
     new_employee.bank_routing_number = bank_routing_number;
     new_employee.hourly_pay_rate = hourly_pay_rate;
 
-    snprintf(new_employee.ssn, SSN_LENGTH, "%s", ssn);
+    new_employee.ssn = strdup(ssn);
 
     return new_employee;
+}
+
+int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_size)
+{
+    size_t password_size = strlen(raw_password);
+    size_t required_size = argon2_encodedlen(TIME_COST, MEMORY_COST, PARALLELISM, SALT_LENGTH, HASH_LENGTH, Argon2_i);
+    uint8_t salt[SALT_LENGTH];
+    uint8_t hash[HASH_LENGTH];
+
+    if (buffer_size < required_size)
+    {
+        fprintf(stderr, "Error: Hashed passcode buffer size (%zu) is too small. Required: %zu bytes.\n",
+                buffer_size, required_size);
+        return -2;
+    }
+
+    int hashedCode = argon2i_hash_encoded(TIME_COST, MEMORY_COST, PARALLELISM, raw_password, password_size, salt, SALT_LENGTH, HASH_LENGTH, raw_password_buffer, buffer_size);
+    if (hashedCode != ARGON2_OK)
+    {
+        fprintf(stderr, "Argon2 hashing failed: %s\n", argon2_error_message(hashedCode));
+    }
+    return hashedCode;
 }
 
 #endif
