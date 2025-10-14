@@ -67,7 +67,7 @@ void displayEmployees(struct Employee *employees, int size)
 
 /**
  * @brief Searches for an employee by their first name.
- * 
+ *
  * This function prompts the user to enter the first name of an employee to search for.
  * It then iterates through the array of employees, performing a case-insensitive
  * comparison between the input name and each employee's first name.
@@ -75,7 +75,7 @@ void displayEmployees(struct Employee *employees, int size)
  * details of the employee using the `displayEmployee` function, and stops searching.
  * If no match is found after checking the entire array, it informs the user that
  * the employee could not be found.
- * 
+ *
  * @param employees A pointer to the array of `struct Employee` that will be searched.
  * @note The function allocates and frees memory internally for the user's input.
  *       The search is case-insensitive.
@@ -103,6 +103,31 @@ void searchEmployeeByName(struct Employee *employees)
         printf("Couldn't find the employee you were searching for.\n");
     }
     free(name);
+}
+
+void searchEmployeeByUsername(struct Employee *employees)
+{
+    char *id = (char *)malloc(sizeof(char) * 20);
+    printf("Enter the username of the employee: ");
+    int flag = 0;
+    scanf("%s", id);
+    for (int i = 0; i < MAX_EMPLOYEES; i++)
+    {
+        if (employees[i].first_name != NULL)
+        {
+            if (strcasecmp(employees[i].username, id) == 0)
+            {
+                displayEmployee(employees[i]);
+                printf("\n");
+                flag = 1;
+            }
+        }
+    }
+    if (!flag)
+    {
+        printf("Couldn't find the employee you were searching for.\n");
+    }
+    free(id);
 }
 
 /**

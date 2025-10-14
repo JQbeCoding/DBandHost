@@ -34,7 +34,7 @@ int main(void)
                                                "M-3455663", "Avashia100604!!", "10/06/04", "06/01/24", "Admin", "CTO", 334844843, 01234567, 56.673445, "000-01-9989");
     struct Employee employee2 = createEmployee("Lamar", "Jevon", "Henderson", "213-555-8192", "lamar.henderson@soxietytech.com", "8429 Sunset Blvd, Apt 12C", "HndrsonL001", "P@ssW0rd!93", "11/22/1993", "07/15/2022",
                                                "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
-    struct Employee employee3 = createEmployee("Lamar", "Jacob", "Green", "213-555-8192", "lamar.henderson@soxietytech.com", "8429 Sunset Blvd, Apt 12C", "HndrsonL001", "P@ssW0rd!93", "11/22/1993", "07/15/2022",
+    struct Employee employee3 = createEmployee("Lamar", "Jacob", "Green", "213-555-8192", "lamar.green@soxietytech.com", "9248 Sunrise Blvd, Apt 12A", "GreenL001", "P@ssW0rd!94", "11/22/2003", "07/15/2025",
                                                "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
 
     *employees = employee1;
@@ -45,6 +45,7 @@ int main(void)
 
     displayEmployees(employees, 10);
     searchEmployeeByName(employees);
+    searchEmployeeByUsername(employees);
 
     free(employees);
 }
