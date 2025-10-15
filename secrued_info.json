@@ -1,0 +1,28 @@
+{ 
+  "employees": [
+    {
+      "name": "Ja'Quis Avshia Franklin",
+      "dob": "10/06/04",
+      "address": "6500 Monteith Drive",
+      "role": "Admin",
+      "position": "CTO",
+      "date_hired": "06/01/24"
+    },
+    {
+      "name": "Lamar Jevon Henderson",
+      "dob": "11/22/1993",
+      "address": "8429 Sunset Blvd, Apt 12C",
+      "role": "Engineer",
+      "position": "Backend Developer",
+      "date_hired": "07/15/2022"
+    },
+    {
+      "name": "Lamar Jacob Green",
+      "dob": "11/22/2003",
+      "address": "9248 Sunrise Blvd, Apt 12A",
+      "role": "Engineer",
+      "position": "Backend Developer",
+      "date_hired": "07/15/2025"
+    }
+  ]
+} 
