@@ -28,9 +28,9 @@ int main(void)
     start = clock();
 
     // Creating a File to write the final piece of information to
-    FILE *maydayz_emp_inforamtion;
-    maydayz_emp_inforamtion = fopen("secrued_info.json", "w");
-    if (maydayz_emp_inforamtion == NULL)
+    FILE *maydayz_emp_information;
+    maydayz_emp_information = fopen("secured_info.json", "w");
+    if (maydayz_emp_information == NULL)
     {
         perror("Error Opening text file for MayDayz Employees");
         exit(EXIT_FAILURE);
@@ -83,11 +83,11 @@ int main(void)
 
     displayEmployees(employees, 10);
     printf("\n");
-    fprintf(maydayz_emp_inforamtion, "{ \n");
-    fprintf(maydayz_emp_inforamtion, "  \"employees\": [\n");
+    fprintf(maydayz_emp_information, "{ \n");
+    fprintf(maydayz_emp_information, "  \"employees\": [\n");
     for (int i = 0; i < 3; i++)
     {
-        fprintf(maydayz_emp_inforamtion,
+        fprintf(maydayz_emp_information,
                 "    {\n"
                 "      \"name\": \"%s %s %s\",\n"
                 "      \"dob\": \"%s\",\n"
@@ -101,8 +101,8 @@ int main(void)
                 // Added a ternary operator to check if the object is last
                 (i < 2) ? "," : "");
     }
-    fprintf(maydayz_emp_inforamtion, "  ]\n");
-    fprintf(maydayz_emp_inforamtion, "} ");
+    fprintf(maydayz_emp_information, "  ]\n");
+    fprintf(maydayz_emp_information, "} ");
     printf("Successfully wrote to secured info file!\n");
 
     free(employees);
