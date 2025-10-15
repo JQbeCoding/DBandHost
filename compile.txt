@@ -1,0 +1,5 @@
+gcc -o db_app DB.c \
+    -I./phc-winner-argon2/include \
+    -L./phc-winner-argon2 \
+    -L/opt/homebrew/opt/openssl/lib \
+    -largon2 -lcrypto

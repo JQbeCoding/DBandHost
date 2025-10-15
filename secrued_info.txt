@@ -1,0 +1,21 @@
+Name: Ja'Quis A Franklin
+DOB: 10/06/04
+Address: 6500 Monteith Drive
+Role: Admin
+Position: CTO
+Date Hired: 06/01/24
+
+Name: Lamar J Henderson
+DOB: 11/22/1993
+Address: 8429 Sunset Blvd, Apt 12C
+Role: Engineer
+Position: Backend Developer
+Date Hired: 07/15/2022
+
+Name: Lamar J Green
+DOB: 11/22/2003
+Address: 9248 Sunrise Blvd, Apt 12A
+Role: Engineer
+Position: Backend Developer
+Date Hired: 07/15/2025
+

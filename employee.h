@@ -1,13 +1,19 @@
+/**
+ * Property of Maydayz Smokn Bar-Be-Cue LLC.
+ * Any unauthorized use of this program is against
+ * the law and is NOT open source for free use.
+ */
+
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
-#define SSN_LENGTH 12
 #define MAX_EMPLOYEES 200
 #define TIME_COST 3
 #define MEMORY_COST 65536
 #define PARALLELISM 1
 #define HASH_LENGTH 100
 #define SALT_LENGTH 16
-#define ENCODED_PASSCODE_BUFFER_SIZE 150
+#define ENCODED_PASSCODE_BUFFER_SIZE 188
+#define MALLOC_NAME_SIZE 188
 
 #include <stdio.h>
 #include <string.h>
@@ -89,10 +95,10 @@ void displayEmployees(struct Employee *employees, int size)
  */
 void searchEmployeeByName(struct Employee *employees)
 {
-    char *name = (char *)malloc(sizeof(char) * 20);
+    char *name = (char *)malloc(sizeof(char) * MALLOC_NAME_SIZE);
     printf("Enter the first name of the employee: ");
     int flag = 0;
-    scanf("%s", name);
+    scanf("%187s", name);
     for (int i = 0; i < MAX_EMPLOYEES; i++)
     {
         if (employees[i].first_name != NULL)
@@ -114,10 +120,10 @@ void searchEmployeeByName(struct Employee *employees)
 
 void searchEmployeeByUsername(struct Employee *employees)
 {
-    char *id = (char *)malloc(sizeof(char) * 20);
+    char *id = (char *)malloc(sizeof(char) * MALLOC_NAME_SIZE);
     printf("Enter the username of the employee: ");
     int flag = 0;
-    scanf("%s", id);
+    scanf("%187s", id);
     for (int i = 0; i < MAX_EMPLOYEES; i++)
     {
         if (employees[i].first_name != NULL)
@@ -173,7 +179,17 @@ struct Employee createEmployee(char *first_name, char *middle_name, char *last_n
     new_employee.mailing_address = strdup(mailing_address);
 
     new_employee.username = strdup(username);
-    new_employee.passcode = strdup(passcode);
+
+    // This is here to pad for the new hashed password as
+    // otherwise it will cause memory corruption
+    new_employee.passcode = (char *)malloc(ENCODED_PASSCODE_BUFFER_SIZE);
+    if (new_employee.passcode == NULL)
+    {
+        perror("malloc failed for passcode buffer");
+        exit(EXIT_FAILURE);
+    }
+    snprintf(new_employee.passcode, ENCODED_PASSCODE_BUFFER_SIZE, "%s", passcode);
+
     new_employee.birthday = strdup(birthday);
 
     new_employee.hire_date = strdup(hire_date);
@@ -183,12 +199,71 @@ struct Employee createEmployee(char *first_name, char *middle_name, char *last_n
     new_employee.bank_account_number = bank_account_number;
     new_employee.bank_routing_number = bank_routing_number;
     new_employee.hourly_pay_rate = hourly_pay_rate;
-
-    new_employee.ssn = strdup(ssn);
+    // The same logic for the password is applied to
+    // the ssn
+    new_employee.ssn = (char *)malloc(ENCODED_PASSCODE_BUFFER_SIZE);
+    if (new_employee.ssn == NULL)
+    {
+        perror("malloc failed for passcode buffer");
+        exit(EXIT_FAILURE);
+    }
+    snprintf(new_employee.ssn, ENCODED_PASSCODE_BUFFER_SIZE, "%s", ssn);
 
     return new_employee;
 }
 
+// Added by Copilot
+/**
+ * Free all heap-allocated fields inside a single Employee struct.
+ * This does not free the struct itself (since Employee is returned by
+ * value in this project); it only frees fields allocated on the heap.
+ */
+void freeEmployee(struct Employee *emp)
+{
+    if (emp == NULL)
+        return;
+
+    free(emp->first_name);
+    free(emp->middle_name);
+    free(emp->last_name);
+    free(emp->phone_number);
+    free(emp->email);
+    free(emp->mailing_address);
+    free(emp->username);
+    free(emp->passcode);
+    free(emp->birthday);
+    free(emp->hire_date);
+    free(emp->role);
+    free(emp->position);
+    free(emp->ssn);
+
+    emp->first_name = emp->middle_name = emp->last_name = emp->phone_number = emp->email = emp->mailing_address = emp->username = NULL;
+    emp->passcode = emp->birthday = emp->hire_date = emp->role = emp->position = emp->ssn = NULL;
+}
+
+void freeEmployees(struct Employee *employees, int size)
+{
+    if (employees == NULL)
+        return;
+
+    for (int i = 0; i < size; i++)
+    {
+        if (employees[i].first_name == NULL)
+            break;
+        freeEmployee(&employees[i]);
+    }
+}
+
+/**
+ * @brief Hashes the passcode and initializes the password to an argon2 password.
+ *
+ * This function uses the raw password given from the user and converts it to a
+ * hash value that is safer for a production database.
+ * @param raw_password is a pointer to the password given from the user.
+ * @param raw_password_buffer is the pointer to the address or location of the current
+ * password
+ * @param buffer_size is the allocated size in bytes for the new password
+ */
 int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_size)
 {
     size_t password_size = strlen(raw_password);

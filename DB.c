@@ -11,13 +11,30 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "employee.h"
 
 #define MAX_EMPLOYEES 200
-#define PASSWORD_BUFFER 150
+#define PASSWORD_BUFFER 188
 
 int main(void)
 {
+
+    // Used in demonstration to see how long the program takes to order through loops
+    clock_t start, end;
+
+    double time_used;
+
+    start = clock();
+
+    // Creating a File to write the final piece of information to
+    FILE *maydayz_emp_inforamtion;
+    maydayz_emp_inforamtion = fopen("secrued_info.txt", "w");
+    if (maydayz_emp_inforamtion == NULL)
+    {
+        perror("Error Opening text file for MayDayz Employees");
+        exit(EXIT_FAILURE);
+    }
 
     // Testing functions
     struct Employee *employees = (struct Employee *)calloc(MAX_EMPLOYEES, sizeof(struct Employee));
@@ -57,17 +74,34 @@ int main(void)
         memcpy(passwords + i * passcode_array_size, employees[i].passcode, passcode_array_size);
         *(passwords + i * passcode_array_size + raw_password_len) = '\0';
     }
-
-    // adding employee with same name
-
     displayEmployees(employees, 10);
     searchEmployeeByName(employees);
     searchEmployeeByUsername(employees);
-    char *current_raw_password = passwords + (0 * passcode_array_size);
-    int password_hash = hashPasscode(current_raw_password, employee1.passcode, 188);
+    for (int i = 0; i < 3; i++)
+    {
+        char *current_raw_password = passwords + (i * passcode_array_size);
+        int password_hash = hashPasscode(current_raw_password, employees[i].passcode, PASSWORD_BUFFER);
+
+        printf("%s Hashed Password: %d, %s\n", employees[i].first_name, password_hash, employees[i].passcode);
+    }
+
     displayEmployees(employees, 10);
     printf("\n");
 
+    for (int i = 0; i < 3; i++)
+    {
+        fprintf(maydayz_emp_inforamtion, "Name: %s %.1s %s\nDOB: %s\nAddress: %s\nRole: %s\nPosition: %s\nDate Hired: %s\n", employees[i].first_name, employees[i].middle_name, employees[i].last_name, employees[i].birthday,
+                employees[i].mailing_address, employees[i].role, employees[i].position, employees[i].hire_date);
+        fprintf(maydayz_emp_inforamtion, "\n");
+    }
+
+    printf("Successfully wrote to secured info file!\n");
+
     free(employees);
     free(passwords);
+
+    end = clock();
+
+    time_used = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Execution Time: %f seconds\n", time_used);
 }
