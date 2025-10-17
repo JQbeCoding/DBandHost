@@ -27,7 +27,7 @@ int main(void)
 
     start = clock();
 
-    // Creating a File to write the final piece of information to
+    // Creating a File to write the final piece of information to a json file
     FILE *maydayz_emp_information;
     maydayz_emp_information = fopen("secured_info.json", "w");
     if (maydayz_emp_information == NULL)
@@ -49,7 +49,7 @@ int main(void)
     }
 
     struct Employee employee1 = createEmployee("Ja'Quis", "Avshia", "Franklin", "704-967-5408", "jaquis.franklin@maydayz.com", "6500 Monteith Drive",
-                                               "M-3455663", "Avashia100604!!", "10/06/04", "06/01/24", "Admin", "CTO", 334844843, 01234567, 56.673445, "000-01-9989");
+                                               "NULL", "Avashia100604!!", "10/06/04", "06/01/24", "Admin", "CTO", 334844843, 01234567, 56.673445, "000-01-9989");
     struct Employee employee2 = createEmployee("Lamar", "Jevon", "Henderson", "213-555-8192", "lamar.henderson@soxietytech.com", "8429 Sunset Blvd, Apt 12C",
                                                "HndrsonL001", "P@ssW0rd!93", "11/22/1993", "07/15/2022",
                                                "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
@@ -60,7 +60,10 @@ int main(void)
     *employees = employee1;
     *(employees + 1) = employee2;
     *(employees + 2) = employee3;
-
+    printf("%s Username is: %s\n", employee1.first_name, employee1.username);
+    createUserName(&employee1);
+    printf("%s New username is: %s\n\n", employee1.first_name, employee1.username);
+    *employees = employee1;
     size_t passcode_array_size = sizeof(employee1.passcode);
 
     char *passwords = (char *)calloc(MAX_EMPLOYEES, PASSWORD_BUFFER);
@@ -72,6 +75,8 @@ int main(void)
     }
     displayEmployees(employees, 10);
     searchEmployeeByName(employees);
+    printf("%s Username is: %s\n\n", employee1.first_name, employee1.username);
+    displayEmployee(employee1);
     searchEmployeeByUsername(employees);
     for (int i = 0; i < 3; i++)
     {
@@ -105,7 +110,7 @@ int main(void)
     fprintf(maydayz_emp_information, "} ");
     printf("Successfully wrote to secured info file!\n");
 
-    free(employees);
+    freeEmployees(employees, MAX_EMPLOYEES);
     free(passwords);
 
     end = clock();

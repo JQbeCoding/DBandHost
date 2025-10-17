@@ -52,7 +52,7 @@ struct Employee
  */
 void displayEmployee(struct Employee employee)
 {
-    printf("Name: %s %.1s %s\nDOB: %s\nAddress: %s\nRole: %s\nPosition: %s\nDate Hired: %s\n", employee.first_name, employee.middle_name, employee.last_name, employee.birthday,
+    printf("Name: %s %.1s %s\nUsername: %s\nDOB: %s\nAddress: %s\nRole: %s\nPosition: %s\nDate Hired: %s\n", employee.first_name, employee.middle_name, employee.last_name, employee.username, employee.birthday,
            employee.mailing_address, employee.role, employee.position, employee.hire_date);
 }
 
@@ -124,9 +124,10 @@ void searchEmployeeByUsername(struct Employee *employees)
     printf("Enter the username of the employee: ");
     int flag = 0;
     scanf("%187s", id);
+    printf("The id you entered: %s\n", id);
     for (int i = 0; i < MAX_EMPLOYEES; i++)
     {
-        if (employees[i].first_name != NULL)
+        if (employees[i].username != NULL)
         {
             if (strcasecmp(employees[i].username, id) == 0)
             {
@@ -237,10 +238,25 @@ void freeEmployee(struct Employee *emp)
     free(emp->position);
     free(emp->ssn);
 
-    emp->first_name = emp->middle_name = emp->last_name = emp->phone_number = emp->email = emp->mailing_address = emp->username = NULL;
-    emp->passcode = emp->birthday = emp->hire_date = emp->role = emp->position = emp->ssn = NULL;
+    emp->first_name = NULL;
+    emp->middle_name = NULL;
+    emp->last_name = NULL;
+    emp->phone_number = NULL;
+    emp->email = NULL;
+    emp->mailing_address = NULL;
+    emp->username = NULL;
+    emp->passcode = NULL;
+    emp->birthday = NULL;
+    emp->hire_date = NULL;
+    emp->role = NULL;
+    emp->position = NULL;
+    emp->ssn = NULL;
 }
 
+/**
+ * Function to actually free all of the employees within
+ * the database22
+ */
 void freeEmployees(struct Employee *employees, int size)
 {
     if (employees == NULL)
@@ -269,7 +285,6 @@ int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_si
     size_t password_size = strlen(raw_password);
     size_t required_size = argon2_encodedlen(TIME_COST, MEMORY_COST, PARALLELISM, SALT_LENGTH, HASH_LENGTH, Argon2_i);
     uint8_t salt[SALT_LENGTH];
-    uint8_t hash[HASH_LENGTH];
 
     if (buffer_size < required_size)
     {
@@ -284,6 +299,23 @@ int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_si
         fprintf(stderr, "Argon2 hashing failed: %s\n", argon2_error_message(hashedCode));
     }
     return hashedCode;
+}
+
+void createUserName(struct Employee *emp)
+{
+    srand(time(NULL));
+    size_t min = 11111111;
+    size_t max = 99999999;
+    size_t serial_integer = rand() % (max - min + 1) + min;
+    const size_t final_size = 2 + 8 + 1;
+    char *new_username = (char *)malloc(final_size);
+    if (new_username == NULL)
+    {
+        perror("Failed to allocate memory");
+        return;
+    }
+    snprintf(new_username, final_size, "M-%zu", serial_integer);
+    emp->username = new_username;
 }
 
 #endif
