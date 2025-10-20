@@ -22,6 +22,9 @@
 #include "argon2.h"
 // For random bytes
 #include <sys/random.h>
+#include </dev/urandom>
+#include <unistd.h>
+#include <fcntl.h>
 
 struct Employee
 {
@@ -286,6 +289,20 @@ int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_si
     size_t required_size = argon2_encodedlen(TIME_COST, MEMORY_COST, PARALLELISM, SALT_LENGTH, HASH_LENGTH, Argon2_i);
     uint8_t salt[SALT_LENGTH];
 
+    int urandom_fd = open("/dev/urandom", O_RDONLY);
+    if (urandom_fd == -1)
+    {
+        fprintf(stderr, "Error: Could not open /dev/urandom\n");
+        return -3;
+    }
+    ssize_t bytes_read = read(urandom_fd, salt, SALT_LENGTH);
+    close(urandom_fd);
+    if (bytes_read != SALT_LENGTH)
+    {
+        fprintf(stderr, "Error: Failed to read %d bytes from /dev/urandom. Read %zd.\n",
+                SALT_LENGTH, bytes_read);
+        return -4;
+    }
     if (buffer_size < required_size)
     {
         fprintf(stderr, "Error: Hashed passcode buffer size (%zu) is too small. Required: %zu bytes.\n",
@@ -303,7 +320,6 @@ int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_si
 
 void createUserName(struct Employee *emp)
 {
-    srand(time(NULL));
     size_t min = 11111111;
     size_t max = 99999999;
     size_t serial_integer = rand() % (max - min + 1) + min;

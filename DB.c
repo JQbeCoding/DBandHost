@@ -54,16 +54,19 @@ int main(void)
                                                "HndrsonL001", "P@ssW0rd!93", "11/22/1993", "07/15/2022",
                                                "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
     struct Employee employee3 = createEmployee("Lamar", "Jacob", "Green", "213-555-8192", "lamar.green@soxietytech.com", "9248 Sunrise Blvd, Apt 12A", "GreenL001",
-                                               "P@ssW0rd!94", "11/22/2003", "07/15/2025",
+                                               "P@ssW0rd!104", "11/22/2003", "07/15/2025",
                                                "Engineer", "Backend Developer", 547829103, 10293847, 50.75, "000-47-8392");
 
     *employees = employee1;
     *(employees + 1) = employee2;
     *(employees + 2) = employee3;
-    printf("%s Username is: %s\n", employee1.first_name, employee1.username);
-    createUserName(&employee1);
-    printf("%s New username is: %s\n\n", employee1.first_name, employee1.username);
-    *employees = employee1;
+    for (int i = 0; i < 3; i++)
+    {
+        printf("%s Username is: %s\n", employees[i].first_name, employees[i].username);
+        createUserName(&employees[i]);
+        printf("%s New username is: %s\n\n", employees[i].first_name, employees[i].username);
+        *(employees + i) = employees[i];
+    }
     size_t passcode_array_size = sizeof(employee1.passcode);
 
     char *passwords = (char *)calloc(MAX_EMPLOYEES, PASSWORD_BUFFER);
@@ -75,15 +78,13 @@ int main(void)
     }
     displayEmployees(employees, 10);
     searchEmployeeByName(employees);
-    printf("%s Username is: %s\n\n", employee1.first_name, employee1.username);
-    displayEmployee(employee1);
     searchEmployeeByUsername(employees);
     for (int i = 0; i < 3; i++)
     {
         char *current_raw_password = passwords + (i * passcode_array_size);
         int password_hash = hashPasscode(current_raw_password, employees[i].passcode, PASSWORD_BUFFER);
 
-        printf("%s Hashed Password: %d, %s\n", employees[i].first_name, password_hash, employees[i].passcode);
+        printf("%s Hashed Password: %s\n", employees[i].first_name, employees[i].passcode);
     }
 
     displayEmployees(employees, 10);
@@ -95,19 +96,21 @@ int main(void)
         fprintf(maydayz_emp_information,
                 "    {\n"
                 "      \"name\": \"%s %s %s\",\n"
+                "      \"ID\": \"%s\",\n"
                 "      \"dob\": \"%s\",\n"
                 "      \"address\": \"%s\",\n"
                 "      \"role\": \"%s\",\n"
                 "      \"position\": \"%s\",\n"
                 "      \"date_hired\": \"%s\"\n"
                 "    }%s\n",
-                employees[i].first_name, employees[i].middle_name, employees[i].last_name, employees[i].birthday,
+                employees[i].first_name, employees[i].middle_name, employees[i].last_name, employees[i].username, employees[i].birthday,
                 employees[i].mailing_address, employees[i].role, employees[i].position, employees[i].hire_date,
                 // Added a ternary operator to check if the object is last
                 (i < 2) ? "," : "");
     }
     fprintf(maydayz_emp_information, "  ]\n");
     fprintf(maydayz_emp_information, "} ");
+    fclose(maydayz_emp_information);
     printf("Successfully wrote to secured info file!\n");
 
     freeEmployees(employees, MAX_EMPLOYEES);
