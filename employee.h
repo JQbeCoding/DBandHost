@@ -6,14 +6,14 @@
 
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
-#define MAX_EMPLOYEES 200
-#define TIME_COST 3
-#define MEMORY_COST 65536
-#define PARALLELISM 1
-#define HASH_LENGTH 100
-#define SALT_LENGTH 16
-#define ENCODED_PASSCODE_BUFFER_SIZE 188
-#define MALLOC_NAME_SIZE 188
+#define MAX_EMPLOYEES 0xC8
+#define TIME_COST 0x3
+#define MEMORY_COST 0x10000
+#define PARALLELISM 0x1
+#define HASH_LENGTH 0x64
+#define SALT_LENGTH 0x10
+#define ENCODED_PASSCODE_BUFFER_SIZE 0xBC
+#define MALLOC_NAME_SIZE 0xBC
 
 #include <stdio.h>
 #include <string.h>
