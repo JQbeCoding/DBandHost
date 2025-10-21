@@ -318,6 +318,50 @@ int hashPasscode(char *raw_password, char *raw_password_buffer, size_t buffer_si
     return hashedCode;
 }
 
+/**
+ * Hash an SSN (digits only) into an Argon2 encoded string.
+ *
+ * Accepts SSN in common formats (e.g. "123456789" or "123-45-6789") and
+ * normalizes to the 9-digit form before hashing.
+ *
+ * Returns ARGON2_OK on success or a negative error code matching the
+ * error conditions used in hashPasscode.
+ */
+int hashSSN(char *raw_ssn, char *raw_ssn_buffer, size_t buffer_size)
+{
+    size_t ssn_size = strlen(raw_ssn);
+    size_t required_size = argon2_encodedlen(TIME_COST, MEMORY_COST, PARALLELISM, SALT_LENGTH, HASH_LENGTH, Argon2_i);
+    uint8_t salt[SALT_LENGTH];
+
+    int urandom_fd = open("/dev/urandom", O_RDONLY);
+    if (urandom_fd == -1)
+    {
+        fprintf(stderr, "Error: Could not open /dev/urandom\n");
+        return -3;
+    }
+    ssize_t bytes_read = read(urandom_fd, salt, SALT_LENGTH);
+    close(urandom_fd);
+    if (bytes_read != SALT_LENGTH)
+    {
+        fprintf(stderr, "Error: Failed to read %d bytes from /dev/urandom. Read %zd.\n",
+                SALT_LENGTH, bytes_read);
+        return -4;
+    }
+    if (buffer_size < required_size)
+    {
+        fprintf(stderr, "Error: Hashed passcode buffer size (%zu) is too small. Required: %zu bytes.\n",
+                buffer_size, required_size);
+        return -2;
+    }
+
+    int hashedCode = argon2i_hash_encoded(TIME_COST, MEMORY_COST, PARALLELISM, raw_ssn, ssn_size, salt, SALT_LENGTH, HASH_LENGTH, raw_ssn_buffer, buffer_size);
+    if (hashedCode != ARGON2_OK)
+    {
+        fprintf(stderr, "Argon2 hashing failed: %s\n", argon2_error_message(hashedCode));
+    }
+    return hashedCode;
+}
+
 void createUserName(struct Employee *emp)
 {
     size_t min = 11111111;

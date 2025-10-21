@@ -68,7 +68,7 @@ int main(void)
         *(employees + i) = employees[i];
     }
     size_t passcode_array_size = sizeof(employee1.passcode);
-
+    size_t ssn_array_size = sizeof(employee1.ssn);
     char *passwords = (char *)calloc(MAX_EMPLOYEES, PASSWORD_BUFFER);
     if (passwords == NULL)
     {
@@ -76,15 +76,27 @@ int main(void)
         free(employees);
         return 1;
     }
+
+    char *ssnumbers = (char *)calloc(MAX_EMPLOYEES, PASSWORD_BUFFER);
+    if (ssnumbers == NULL)
+    {
+        perror("Failed to allocate raw password buffer");
+        free(employees);
+        return 1;
+    }
+
     displayEmployees(employees, 10);
-    searchEmployeeByName(employees);
-    searchEmployeeByUsername(employees);
+    // searchEmployeeByName(employees);
+    // searchEmployeeByUsername(employees);
     for (int i = 0; i < 3; i++)
     {
         char *current_raw_password = passwords + (i * passcode_array_size);
+        char *current_raw_ssn = ssnumbers + (i * ssn_array_size);
         int password_hash = hashPasscode(current_raw_password, employees[i].passcode, PASSWORD_BUFFER);
+        int ssn_hash = hashSSN(current_raw_ssn, employees[i].ssn, PASSWORD_BUFFER);
 
         printf("%s Hashed Password: %s\n", employees[i].first_name, employees[i].passcode);
+        printf("%s Hashed SSN: %s\n", employees[i].first_name, employees[i].ssn);
     }
 
     displayEmployees(employees, 10);
@@ -120,4 +132,6 @@ int main(void)
 
     time_used = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Execution Time: %f seconds\n", time_used);
+
+    return 0;
 }
