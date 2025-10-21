@@ -14,8 +14,8 @@
 #include <time.h>
 #include "employee.h"
 
-#define MAX_EMPLOYEES 200
-#define PASSWORD_BUFFER 188
+#define MAX_EMPLOYEES 0xC8
+#define PASSWORD_BUFFER 0xBC
 
 int main(void)
 {
